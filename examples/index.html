@@ -1,0 +1,65 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>SocketIO Testing!</title>
+</head>
+<body>
+  <input id="username" type="text"/>
+  <input id="password" type="password"/>
+  <button id='btn'>Send message!</button>
+  <button id='btn-login'>Login Admin!</button>
+  <p id='jwt'></p>
+
+  <!-- JavaScript -->
+  <script type="text/javascript" src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
+  <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+  <script type="text/javascript" charset="utf-8">
+    $(document).ready(function(){
+      var main = io.connect('http://localhost:5000/')
+      main.on('connect', function() {
+        console.log('[MAIN] Connected to the SocketIO server');
+        main.emit('my message', {data: '[MAIN] Hello Server!!'});
+      });
+      main.on('disconnect', function() {
+        console.log('[MAIN] disconnected from the SocketIO server');
+      });
+      main.on('my response', function(msg) {
+        console.log('[MAIN] Received this reposnse from SocketIO Server: ', msg);
+      });
+
+      $('#btn').click(function() {
+        main.emit('my message', {data: '[MAIN] Haha! I made it!'});
+      })
+
+      var auth = io.connect('http://localhost:5000/auth')
+      auth.on('login_success', function(msg) {
+        console.log('[AUTH] Got this from login_success ', msg);
+        $('#jwt').text(msg.access_token);
+        console.log('[AUTH] Joining room...');
+        main.emit('join_room', {access_token: msg.access_token});
+      });
+
+
+      var other_conn = io.connect('http://localhost:5000')
+      other_conn.on('connect', function() {
+        console.log('[OTHER] Connected to the SocketIO server');
+        other_conn.emit('my message', {data: '[OTHER] Hello Server!!'});
+      });
+      other_conn.on('disconnect', function() {
+        console.log('[OTHER] disconnected from the SocketIO server');
+      });
+      other_conn.on('my response', function(msg) {
+        console.log('[OTHER] I got this mesage: ', msg);
+      })
+
+      $('#btn-login').click(function() {
+        var username = $('#username').val();
+        var password = $('#password').val();
+        auth.emit('login', {user: username, pass: password});
+      })
+    });
+  </script>
+</body>
+</html>
