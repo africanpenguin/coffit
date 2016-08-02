@@ -8,6 +8,7 @@ class EnvConfig(object):
     DATABASE_URL = 'sqlite:///coffit.db'
     CONNECTED_ROOM = 'coffee_lounge'
     JWT_SECRET = 'secret'
+    SERVER_PORT = 5000
 
     def __getattribute__(self, name):
         return os.environ.get(name, object.__getattribute__(self, name))

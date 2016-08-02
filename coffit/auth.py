@@ -1,10 +1,12 @@
 """Namespace that handles user authentication."""
 
+from __future__ import absolute_import, print_function
+
 from datetime import datetime, timedelta
 import jwt
 from jwt.exceptions import InvalidTokenError
 
-from . import sio
+from .socket import sio
 from .config import config
 from .utils import Namespace
 

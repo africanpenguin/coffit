@@ -1,8 +1,14 @@
-import socketio
+"""Init."""
 
-sio = socketio.Server()
+from __future__ import absolute_import, print_function
 
-from . import models  # noqa
-from . import api, auth  # noqa
+from .api import api
+from .auth import auth
+from .socket import app, sio
 
-app = socketio.Middleware(sio)
+__all__ = (
+    'api',
+    'auth',
+    'app',
+    'sio',
+)
